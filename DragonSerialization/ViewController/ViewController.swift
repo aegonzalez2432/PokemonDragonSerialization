@@ -40,8 +40,8 @@ class ViewController: UIViewController {
     
     @objc
     func manualDecodeButtonPressed() {
-        print("Button Pressed")
         let dragon = NetworkManager.shared.getPokemonManually()
+        //print(dragon)
         self.presentPokemonAlert(dragon: dragon)
     }
     
@@ -51,8 +51,10 @@ class ViewController: UIViewController {
         let dragTypes = dragon.pokemons.compactMap {
             return $0.pokemon.name
         }
+        var dragTypeString = dragTypes.joined(separator: "\n")
         
-        let alert = UIAlertController(title: "Dragon", message: "\(dragTypes)", preferredStyle: .alert)
+        
+        let alert = UIAlertController(title: "Dragon Types", message: "\(dragTypeString)", preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "Okay", style: .default)
         alert.addAction(okayAction)
         
