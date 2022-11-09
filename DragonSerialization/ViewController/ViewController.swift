@@ -48,11 +48,11 @@ class ViewController: UIViewController {
     func presentPokemonAlert(dragon: Dragon?) {
         guard let dragon = dragon else { return }
         
-        let moveNames = dragon.pokemons.compactMap {
+        let dragTypes = dragon.pokemons.compactMap {
             return $0.pokemon.name
         }
         
-        let alert = UIAlertController(title: "Dragon", message: "\(moveNames)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Dragon", message: "\(dragTypes)", preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "Okay", style: .default)
         alert.addAction(okayAction)
         

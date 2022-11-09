@@ -29,7 +29,6 @@ extension NetworkManager {
             
             let jsonObj = try JSONSerialization.jsonObject(with: data)
             guard let baseDict = jsonObj as? [String: Any] else { return nil }
-            print(baseDict)
             return self.parsePokemonManually(base: baseDict)
         } catch {
             print(error)
@@ -40,85 +39,118 @@ extension NetworkManager {
     
     private func parsePokemonManually(base: [String: Any]) -> Dragon? {
         
-        guard let dmgRelaArr = base["damage_relations"] as? [String: Any] else {
-            print("Failed Damage Relations Array")
-            return nil
-        }
-        //Dmg Relations
         var returnDmgRelation: [DamageRelations] = []
         var dblDmgFrom: [NameLink] = []
         var dblDmgTo: [NameLink] = []
         var hlfDmgFrom: [NameLink] = []
         var hlfDmgTo: [NameLink] = []
-        var noDmgFrm: [NameLink] = []
+        var noDmgFrom: [NameLink] = []
         var noDmgTo: [NameLink] = []
-        var counter: Int = 1
-        //var dmgRelID: String = ""
-        dmgRelaArr.forEach{
-            switch counter {
-            case 1:
-                //dmgRelID = "double_damage_from"
-                guard let dmgDict = $0["double_damage_from"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    dblDmgFrom.append(dmgRep)
-                }
-                counter += 1
-            case 2:
-                //dmgRelID = "double_damage_to"
-                guard let dmgDict = $0["double_damage_to"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    dblDmgTo.append(dmgRep)
-                }
-                counter += 1
-            case 3:
-                //dmgRelID = "half_damage_from"
-                guard let dmgDict = $0["half_damage_from"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    hlfDmgFrom.append(dmgRep)
-                }
-                counter += 1
-                
-            case 4:
-                //dmgRelID = "half_damage_to"
-                guard let dmgDict = $0["half_damage_to"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    hlfDmgTo.append(dmgRep)
-                }
-                counter += 1
-                
-            case 5:
-                //dmgRelID = "no_damage_from"
-                guard let dmgDict = $0["no_damage_from"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    noDmgFrm.append(dmgRep)
-                }
-                counter += 1
-                
-            case 6:
-                //dmgRelID = "no_damage_to"
-                guard let dmgDict = $0["no_damage_to"] as? [String: Any] else {return}
-                dmgDict.forEach {_ in
-                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
-                    noDmgTo.append(dmgRep)
-                }
-                counter += 1
-                
-            default:
-                return
-            }
+        guard let dmgRelaArr = base["damage_relations"] as? [String: Any] else {
+            print("Failed Damage Relations Array")
+            return nil
+        }
+        guard let doubleDmgFrm = base["double_damage_from"] as? [String: Any] else {return nil}
+        doubleDmgFrm.forEach{_ in
+            guard let returnDblDmgFrm = self.parseNameLink(nameLink: doubleDmgFrm) else {return}
+            dblDmgFrom.append(returnDblDmgFrm)
+        }
+        guard let doubleDmgTo = base["double_damage_from"] as? [String: Any] else {return nil}
+        doubleDmgTo.forEach{_ in
+            guard let returnDblDmgTo = self.parseNameLink(nameLink: doubleDmgTo) else {return}
+            dblDmgTo.append(returnDblDmgTo)
+        }
+        guard let halfDmgFrm = base["half_damage_from"] as? [String: Any] else {return nil}
+        halfDmgFrm.forEach{_ in
+            guard let returnHlfDmgFrm = self.parseNameLink(nameLink: halfDmgFrm) else {return}
+            hlfDmgFrom.append(returnHlfDmgFrm)
+        }
+        guard let halfDmgTo = base["half_damage_to"] as? [String: Any] else {return nil}
+        halfDmgTo.forEach{_ in
+            guard let returnHlfDmgTo = self.parseNameLink(nameLink: halfDmgTo) else {return}
+            hlfDmgTo.append(returnHlfDmgTo)
+        }
+        
+        guard let noDamageFrom = base["no_damage_from"] as? [String: Any] else {return nil}
+        noDamageFrom.forEach{_ in
+            guard let returnNoDmgFrom = self.parseNameLink(nameLink: noDamageFrom) else {return}
+            noDmgFrom.append(returnNoDmgFrom)
+        }
+        guard let noDamageTo = base["no_damage_to"] as? [String: Any] else {return nil}
+        noDamageTo.forEach{_ in
+            guard let returnNoDmgTo = self.parseNameLink(nameLink: noDamageTo) else {return}
+            noDmgTo.append(returnNoDmgTo)
+        }
+        
+        //Dmg Relations
+
+//        var counter: Int = 1
+//        //var dmgRelID: String = ""
+//        dmgRelaArr.forEach{
+//            switch counter {
+//            case 1:
+//                //dmgRelID = "double_damage_from"
+//                guard let dmgDict = $0["double_damage_from"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    dblDmgFrom.append(dmgRep)
+//                }
+//                counter += 1
+//            case 2:
+//                //dmgRelID = "double_damage_to"
+//                guard let dmgDict = $0["double_damage_to"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    dblDmgTo.append(dmgRep)
+//                }
+//                counter += 1
+//            case 3:
+//                //dmgRelID = "half_damage_from"
+//                guard let dmgDict = $0["half_damage_from"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    hlfDmgFrom.append(dmgRep)
+//                }
+//                counter += 1
+//
+//            case 4:
+//                //dmgRelID = "half_damage_to"
+//                guard let dmgDict = $0["half_damage_to"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    hlfDmgTo.append(dmgRep)
+//                }
+//                counter += 1
+//
+//            case 5:
+//                //dmgRelID = "no_damage_from"
+//                guard let dmgDict = $0["no_damage_from"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    noDmgFrm.append(dmgRep)
+//                }
+//                counter += 1
+//
+//            case 6:
+//                //dmgRelID = "no_damage_to"
+//                guard let dmgDict = $0["no_damage_to"] as? [String: Any] else {return}
+//                dmgDict.forEach {_ in
+//                    guard let dmgRep = self.parseNameLink(nameLink: dmgDict) else {return}
+//                    noDmgTo.append(dmgRep)
+//                }
+//                counter += 1
+//
+//            default:
+//                return
+//            }
             //            guard let dmgDict = $0[dmgRelID] as? [String: Any] else {return}
             //            dmgDict.forEach{_ in
             //                guard let dmgFromRep = self.parseNameLink(nameLink: dmgDict) else { return }
             //                dmgRArr.append(dmgFromRep)
             //            }
-            let finalDmgRelation = DamageRelations(doubleFrom: dblDmgFrom, doubleTo: dblDmgTo, halfFrom: hlfDmgFrom, halfTo: hlfDmgTo, noneFrom: noDmgFrm, noneTo: noDmgTo)
+            let finalDmgRelation = DamageRelations(doubleFrom: dblDmgFrom, doubleTo: dblDmgTo, halfFrom: hlfDmgFrom, halfTo: hlfDmgTo, noneFrom: noDmgFrom, noneTo: noDmgTo)
             returnDmgRelation.append(finalDmgRelation)
-        }
+        //}
 //            let damageRelation = DamageRelations(doubleFrom: dmgFromRep, doubleTo: dmgToRep, halfFrom: halfFromRep, halfTo: halfToRep, noneFrom: noneFromRep, noneTo: noneToRep)
             
             //gameIndeces
@@ -170,7 +202,14 @@ extension NetworkManager {
         
         
         
-        return Dragon(damageRelations: returnDmgRelation, gameIndeces: returnGameIndeces, generation: genRation, id: identity, moveDmgClass: mvDmgReturn, moves: returnMoves, name: nombre, pokemons: returnPoke)
+        return Dragon(damageRelations: returnDmgRelation,
+                      gameIndeces: returnGameIndeces,
+                      generation: genRation,
+                      id: identity,
+                      moveDmgClass: mvDmgReturn,
+                      moves: returnMoves,
+                      name: nombre,
+                      pokemons: returnPoke)
     }
     
     private func parseNameLink(nameLink: [String: Any]) -> NameLink? {
